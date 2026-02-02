@@ -87,7 +87,7 @@ if llm_provider == "OpenAI":
     api_key = st.secrets.get("OPENAI_API_KEY")
     key_name = "OPENAI_API_KEY"
 else:  # Claude
-    model = "claude-3-5-sonnet-20241022" if use_advanced else "claude-3-haiku-20240307"
+    model = "claude-sonnet-4-20250514" if use_advanced else "claude-3-haiku-20240307"
     api_key = st.secrets.get("ANTHROPIC_API_KEY")
     key_name = "ANTHROPIC_API_KEY"
 
