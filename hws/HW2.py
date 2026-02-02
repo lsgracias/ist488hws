@@ -62,7 +62,7 @@ def get_claude_summary(prompt, model, api_key):
 # Show title and description.
 st.title("📄 URL Reader")
 st.write(
-    "Provide a URL and pick a model for "
+    "Provide a URL and pick a model for URL summarization"
 )
 
 # Ask user for their OpenAI API key via `st.text_input`.
