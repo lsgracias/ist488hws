@@ -1,7 +1,8 @@
 import streamlit as st
 
 hw1 = st.Page("hws/HW1.py", title="HW 1", icon="📄")
-hw2 = st.Page("hws/HW2.py", title="HW 2 - URL Summarizer", icon="🌐", default=True)
+hw2 = st.Page("hws/HW2.py", title="HW 2 - URL Summarizer", icon="🌐")
+hw3 = st.Page("hws/HW3.py", title="HW 3 - URL Chatbot", icon=":material/description:", default=True)
 
 pg = st.navigation([hw1, hw2])
 
