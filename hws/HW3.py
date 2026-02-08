@@ -13,10 +13,10 @@ st.write("""
 This chatbot allows you to have a conversation about the content of up to **two URLs**. 
 
 **Features:**
-- 🔗 **URL Context:** Enter up to 2 URLs in the sidebar. The content becomes the chatbot's knowledge base.
-- 🧠 **Conversation Memory:** Uses a **6-message buffer** (3 user questions + 3 assistant responses). 
+- **URL Context:** Enter up to 2 URLs in the sidebar. The content becomes the chatbot's knowledge base.
+- **Conversation Memory:** Uses a **6-message buffer** (3 user questions + 3 assistant responses). 
   Older messages are removed to stay within limits, but the URL context is always preserved.
-- 🤖 **Multiple LLMs:** Choose between OpenAI GPT-4o or Claude Sonnet 4 for responses.
+- **Multiple LLMs:** Choose between OpenAI GPT-4o or Claude Sonnet 4 for responses.
 
 **Memory Implementation:** The system prompt containing URL content is never discarded. 
 Only the conversation history is buffered to the last 6 messages to manage token usage efficiently.
@@ -86,7 +86,7 @@ def get_claude_response(messages, api_key):
             yield text
 
 # --- SIDEBAR OPTIONS ---
-st.sidebar.header("⚙️ Configuration")
+st.sidebar.header("Configuration")
 
 # LLM Selection (requirement 3)
 llm_choice = st.sidebar.selectbox(
@@ -105,7 +105,7 @@ elif llm_choice == "Claude Sonnet 4" and not anthropic_api_key:
 st.sidebar.divider()
 
 # URL Inputs (requirement 2)
-st.sidebar.header("🔗 URL Inputs")
+st.sidebar.header("URL Inputs")
 url1 = st.sidebar.text_input("URL 1:", placeholder="https://example.com/article1")
 url2 = st.sidebar.text_input("URL 2 (optional):", placeholder="https://example.com/article2")
 
@@ -223,7 +223,7 @@ if prompt := st.chat_input("Ask a question about the URL content..."):
 
 # --- SIDEBAR INFO ---
 st.sidebar.divider()
-st.sidebar.header("📊 Chat Stats")
+st.sidebar.header("Chat Stats")
 st.sidebar.write(f"**Model:** {llm_choice}")
 st.sidebar.write(f"**Messages in history:** {len(st.session_state.messages)}")
 st.sidebar.write(f"**Buffer limit:** {MAX_BUFFER_MESSAGES} messages")
