@@ -134,7 +134,7 @@ def create_vector_db():
 
 # --- Initialize Vector Database ---
 if "HW4_VectorDB" not in st.session_state:
-    with st.spinner("Creating vector database from PDF documents..."):
+    with st.spinner("Creating vector database from HTML files..."):
         st.session_state.HW4_VectorDB = create_vector_db()
 
 # Initialize chat history
