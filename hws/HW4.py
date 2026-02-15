@@ -151,20 +151,20 @@ st.sidebar.divider()
 
 # Clear chat button
 if st.sidebar.button("Clear Chat"):
-    st.session_state.lab4_messages = []
+    st.session_state.hw4_messages = []
     st.rerun()
 
 # --- Main Chat Interface ---
 
 # Display chat history
-for message in st.session_state.lab4_messages:
+for message in st.session_state.hw4_messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # Chat input
 if prompt := st.chat_input("Ask a question about the courses..."):
     # Add user message to history
-    st.session_state.lab4_messages.append({"role": "user", "content": prompt})
+    st.session_state.hw4_messages.append({"role": "user", "content": prompt})
     
     # Display user message
     with st.chat_message("user"):
