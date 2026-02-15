@@ -57,7 +57,7 @@ def create_vector_db():
         return None
 
     # Retrieve all PDF files
-    html_files = [f for f in os.listdir(html_dir) if f.endswith('.pdf')]
+    html_files = [f for f in os.listdir(html_dir) if f.endswith('.html')]
     
     if not html_files:
         st.error(f"No PDF files found in {html_dir}.")
