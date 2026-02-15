@@ -64,7 +64,7 @@ def create_vector_db():
         return None
         
     # Initialize ChromaDB client
-    chroma_client = chromadb.Client()
+    chroma_client = chromadb.PersistentClient()
     
     # Create or get collection
     # We use a new name to force a fresh start if the code changes
