@@ -193,9 +193,9 @@ if prompt := st.chat_input("Ask a question about the courses..."):
     system_prompt = f"""You are a helpful Syracuse University student engagement assistant.
 IMPORTANT RULES:
 1. If you find relevant information, clearly state which student organization HTML it comes from.
-2. Be helpful, clear, and concise.
-3. When using information from the context, mention that you found it in the student organization materials.
-4. If the answer to the question isn't provided in the context, use your general knowledge but state that this wasn't from the student organization material.
+2. When using information from the context, mention that you found it in the student organization materials.
+3. If the answer to the question isn't provided in the context, use your general knowledge but state that this wasn't from the student organization material.
+4. Be helpful, clear, and concise.
 
 Here are the relevant course documents:
 {context_text}
