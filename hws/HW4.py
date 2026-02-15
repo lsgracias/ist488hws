@@ -7,7 +7,7 @@ from openai import OpenAI
 import chromadb
 from chromadb.utils import embedding_functions
 import os
-import bs4 as BeautifulSoup
+from bs4 import BeautifulSoup
 
 st.title("🏫 HW4 - Syracuse University Student Org Chatbot")
 st.write("Ask me anything about Syracuse University student organizations!")
