@@ -2,9 +2,10 @@ import streamlit as st
 
 hw1 = st.Page("hws/HW1.py", title="HW 1", icon="📄")
 hw2 = st.Page("hws/HW2.py", title="HW 2 - URL Summarizer", icon="🌐")
-hw3 = st.Page("hws/HW3.py", title="HW 3 - URL Chatbot", icon=":material/description:", default=True)
+hw3 = st.Page("hws/HW3.py", title="HW 3 - URL Chatbot", icon=":material/description:")
+hw4 = st.Page("hws/HW4.py", title ="HW 4 - iSchool Org Chatbot", icon=":material/description:", default=True)
 
-pg = st.navigation([hw1, hw2, hw3])
+pg = st.navigation([hw1, hw2, hw3, hw4])
 
 st.set_page_config(page_title="HW Manager", page_icon="📚")
 
