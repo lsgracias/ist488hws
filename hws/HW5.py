@@ -9,7 +9,7 @@ import os
 import json
 from bs4 import BeautifulSoup
 
-st.title("🏫 HW4 - Syracuse University Student Org Chatbot")
+st.title("🏫 HW5 - Syracuse University Student Org Chatbot")
 st.write("Ask me anything about Syracuse University student organizations!")
 
 # Get API key from secrets
