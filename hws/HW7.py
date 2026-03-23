@@ -7,6 +7,7 @@ import chromadb
 from openai import OpenAI
 import json
 import pandas as pd
+import os
 
 st.title("HW 7 - Law Firm News Intelligence Bot")
 st.write("Ask me anything about news topics or articles!")
@@ -19,39 +20,19 @@ if not openai_api_key:
 
 client = OpenAI(api_key=openai_api_key)
 
-# Column name aliases
-CONTENT_ALIASES = ["document", "content", "body", "text", "article", "description", "summary"]
-TITLE_ALIASES   = ["title", "headline", "head"]
-SOURCE_ALIASES  = ["company_name", "source", "publisher", "outlet", "publication"]
-DATE_ALIASES    = ["date", "published_date", "publish_date", "published_at", "pubdate"]
-URL_ALIASES     = ["url", "link", "href"]
-
-def find_col(df: pd.DataFrame, aliases: list) -> str | None:
-    cols_lower = {c.lower(): c for c in df.columns}
-    for a in aliases:
-        if a in cols_lower:
-            return cols_lower[a]
-    return None
-
 # Build ChromaDB from csv
-def create_vector_db(df: pd.DataFrame):
-    content_col = find_col(df, CONTENT_ALIASES)
-    title_col   = find_col(df, TITLE_ALIASES)
-    source_col  = find_col(df, SOURCE_ALIASES)
-    date_col    = find_col(df, DATE_ALIASES)
-    url_col     = find_col(df, URL_ALIASES)
-
-    if not content_col:
-        st.error(
-            f"Could not find a content column in your CSV. "
-            f"Expected one of: {CONTENT_ALIASES}. "
-            f"Found: {list(df.columns)}"
-        )
+def create_vector_db():
+    csv_path = "./news.csv"
+    
+    if not os.path.exists(csv_path):
+        st.error("news.csv not found!")
         return None
+    
+    df = pd.read_csv(csv_path)
 
-    df = df.dropna(subset=[content_col]).copy()
-    df[content_col] = df[content_col].astype(str).str.strip()
-    df = df[df[content_col] != ""].reset_index(drop=True)
+    df = df.dropna(subset=["Document"]).copy()
+    df["Document"] = df["Document"].astype(str).str.strip()
+    df = df[df["Document"] != ""].reset_index(drop=True)
 
     chroma_client   = chromadb.EphemeralClient()
     collection_name = "HW7Collection_v1"
@@ -68,15 +49,15 @@ def create_vector_db(df: pd.DataFrame):
     ids        = []
 
     for i, row in df.iterrows():
-        content = str(row[content_col])
-        source  = str(row[source_col]) if source_col else "Unknown"
-        date    = str(row[date_col])   if date_col   else "N/A"
-        url     = str(row[url_col])    if url_col    else ""
-        title   = str(row[title_col])  if title_col  else f"{source} — {date}"
+        company = str(row.get("company_name", "Unknown"))
+        date = str(row.get("Date", "N/A"))
+        url = str(row.get("URL", ""))
+        content = str(row["Document"])
+        title   = f"{company} — {date}"
 
         # Embed company + date + content together for better retrieval
         documents.append(f"{title}\n\n{content}")
-        metadatas.append({"title": title, "source": source, "date": date, "url": url, "content": content})
+        metadatas.append({"title": title, "source": company, "date": date, "url": url, "content": content})
         ids.append(f"article_{i}")
 
     if not documents:
@@ -199,30 +180,14 @@ tools = [
 
 # Session State
 if "HW7_VectorDB" not in st.session_state:
-    st.session_state.HW7_VectorDB = None
+    with st.spinner("Loading news knowledge base..."):
+        st.session_state.HW7_VectorDB = create_vector_db()
 if "hw7_messages" not in st.session_state:
     st.session_state.hw7_messages = []
-if "hw7_csv_name" not in st.session_state:
-    st.session_state.hw7_csv_name = None
 if "hw7_model" not in st.session_state:
     st.session_state.hw7_model = "gpt-4o-mini"
 
 # Sidebar
-st.sidebar.header("Data")
-uploaded_file = st.sidebar.file_uploader("Upload articles CSV", type=["csv"])
-
-if uploaded_file is not None and uploaded_file.name != st.session_state.hw7_csv_name:
-    with st.spinner("Building vector database from uploaded articles..."):
-        df = pd.read_csv(uploaded_file)
-        st.session_state.HW7_VectorDB = create_vector_db(df)
-        st.session_state.hw7_csv_name = uploaded_file.name
-        st.session_state.hw7_messages = []  # reset chat on new upload
-    if st.session_state.HW7_VectorDB:
-        n = st.session_state.HW7_VectorDB.count()
-        st.success(f"✅ Loaded **{n} articles** from `{uploaded_file.name}`")
-
-st.sidebar.divider()
-
 st.sidebar.header("Settings")
 
 model_choice = st.sidebar.radio(
@@ -238,7 +203,6 @@ st.sidebar.divider()
 st.sidebar.header("RAG Info")
 st.sidebar.write("**Embedding Model:** text-embedding-3-small")
 st.sidebar.write(f"**LLM Model:** {st.session_state.hw7_model}")
-st.sidebar.write("**Data Source:** Uploaded articles CSV")
 st.sidebar.write("**Memory:** Last 10 messages")
 
 st.sidebar.divider()
@@ -247,20 +211,19 @@ if st.sidebar.button("Clear Chat"):
     st.session_state.hw7_messages = []
     st.rerun()
 
-# Upload CSV if not taken
-if st.session_state.HW7_VectorDB is None:
-    st.info("👈 Upload a CSV of news articles in the sidebar to get started.")
-    st.stop()
-
 # Chat History Display
 for message in st.session_state.hw7_messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # Chat Input
-if prompt := st.chat_input("Ask about the news... e.g. 'Find the most interesting news'"):
-    st.session_state.hw7_messages.append({"role": "user", "content": prompt})
+if "pending_query" in st.session_state:
+    prompt = st.session_state.pop("pending_query")
+else:
+    prompt = st.chat_input("Ask about the news... e.g. 'Find the most interesting news'")
 
+if prompt:
+    st.session_state.hw7_messsages.append({"role":"user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
