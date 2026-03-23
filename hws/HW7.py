@@ -223,7 +223,7 @@ else:
     prompt = st.chat_input("Ask about the news... e.g. 'Find the most interesting news'")
 
 if prompt:
-    st.session_state.hw7_messsages.append({"role":"user", "content": prompt})
+    st.session_state.hw7_messages.append({"role":"user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
